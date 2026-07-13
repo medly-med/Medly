@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قاموسي الطبي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Fredoka:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1730;
+    --paper:#fffaf0;
+    --card:#ffffff;
+    --shadow: 6px 6px 0 rgba(28,23,48,0.12);
+  }
+  /* section identity colors */
+  .sec-english{ --sc1:#3a86ff; --sc2:#8ecae6; --sc3:#eef7ff; }
+  .sec-roots{ --sc1:#2ec27e; --sc2:#8fe3b8; --sc3:#eafff5; }
+  .sec-phrases{ --sc1:#8338ec; --sc2:#c79bf2; --sc3:#f6efff; }
+  .sec-abbr{ --sc1:#fb5607; --sc2:#ffb088; --sc3:#fff3ec; }
+  .sec-confuse{ --sc1:#ef476f; --sc2:#f4a3b8; --sc3:#fff0f4; }
+  .A{ --c1:#ff4d6d; --c2:#ff8fa3; --c3:#fff0f3; }
+  .B{ --c1:#3a86ff; --c2:#8ecae6; --c3:#eef7ff; }
+  .D{ --c1:#ffbe0b; --c2:#ffd966; --c3:#fffaee; }
+  .E{ --c1:#8338ec; --c2:#c79bf2; --c3:#f6efff; }
+  .F{ --c1:#fb5607; --c2:#ffb088; --c3:#fff3ec; }
+  .M{ --c1:#2ec27e; --c2:#8fe3b8; --c3:#eafff5; }
+  .R{ --c1:#ef476f; --c2:#f4a3b8; --c3:#fff0f4; }
+  .S{ --c1:#06aed5; --c2:#8fd9ec; --c3:#e9faff; }
+  .T{ --c1:#f15bb5; --c2:#f4a3b8; --c3:#ffe5f1; }
+  .V{ --c1:#7209b7; --c2:#b5179e; --c3:#f3e5fb; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255,77,109,.10), transparent 40%),
+      radial-gradient(circle at 92% 18%, rgba(58,134,255,.10), transparent 40%),
+      radial-gradient(circle at 50% 95%, rgba(255,190,11,.12), transparent 45%),
+      var(--paper);
+    font-family:'Tajawal', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+  }
+  .page{ display:none; max-width:760px; margin:0 auto; padding:28px 20px 60px; min-height:100vh; }
+  .page.active{display:block; animation:fadeIn .35s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  /* ---------- HOME PAGE ---------- */
+  .home-header{ text-align:center; padding:18px 0 8px; }
+  .home-header .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#1c1730; color:#fff; padding:7px 18px;
+    border-radius:999px; font-size:13px; font-weight:700; letter-spacing:.5px;
+  }
+  .home-title{
+    font-family:'Baloo Bhaijaan 2', sans-serif; font-size:42px; font-weight:800;
+    margin:14px 0 4px; line-height:1.15;
+  }
+  .home-title span{
+    background:linear-gradient(90deg,#ff4d6d,#3a86ff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .home-sub{ font-size:15px; opacity:.65; margin:0 0 26px; font-weight:500; }
+  .deco-row{ display:flex; justify-content:center; gap:18px; margin-bottom:30px; flex-wrap:wrap; }
+  .deco-row svg{ width:32px; height:32px; opacity:.85; }
+  /* ---------- SEARCH BAR ---------- */
+  .search-wrap{ position:relative; margin-bottom:24px; }
+  .search-input{
+    width:100%; border:2px solid #e8e3d6; border-radius:16px;
+    padding:14px 48px 14px 16px; font-family:'Tajawal'; font-size:15px;
+    outline:none; transition:border-color .15s; background:var(--card);
+    box-shadow:var(--shadow); -webkit-appearance:none; appearance:none;
+  }
+  .search-input::-webkit-search-decoration,
+  .search-input::-webkit-search-cancel-button,
+  .search-input::-webkit-search-results-button,
+  .search-input::-webkit-search-results-decoration{ -webkit-appearance:none; display:none; }
+  .search-input::-ms-clear,
+  .search-input::-ms-reveal{ display:none; width:0; height:0; }
+  .search-input:focus{ border-color:#3a86ff; }
+  .search-icon{
+    position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    width:20px; height:20px; opacity:.4; pointer-events:none;
+  }
+  .search-results{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+  .search-empty{ text-align:center; font-size:13px; opacity:.5; padding:20px 0; }
+  .search-result-card{
+    background:var(--card); border-radius:18px; box-shadow:var(--shadow);
+    padding:16px 18px; border-right:5px solid #3a86ff;
+  }
+  .search-result-card.from-roots{ border-right-color:#2ec27e; }
+  .search-result-card.from-phrases{ border-right-color:#8338ec; }
+  .search-result-card.from-abbr{ border-right-color:#fb5607; }
+  .search-result-card.from-confuse{ border-right-color:#ef476f; }
+  .search-tag{
+    font-size:10.5px; font-weight:700; color:#fff; background:#3a86ff;
+    padding:2px 9px; border-radius:999px; display:inline-block; margin-bottom:8px;
+  }
+  .search-result-card.from-roots .search-tag{ background:#2ec27e; }
+  .search-result-card.from-phrases .search-tag{ background:#8338ec; }
+  .search-result-card.from-abbr .search-tag{ background:#fb5607; }
+  .search-result-card.from-confuse .search-tag{ background:#ef476f; }
+  .search-result-en{ font-family:'Fredoka'; font-size:19px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .search-result-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .search-result-head .search-result-en{ margin-bottom:0; }
+  .search-result-ar{ font-size:14px; font-weight:700; margin-bottom:6px; }
+  .search-result-def{ font-size:12.5px; opacity:.65; line-height:1.6; margin-bottom:8px; }
+  .search-result-ex{ font-size:12.5px; font-style:italic; color:#555; line-height:1.5; }
+  .search-confuse-alert{
+    margin-top:10px; font-size:12px; background:#fff0f4; color:#ef476f;
+    padding:8px 12px; border-radius:10px; font-weight:700;
+  }
+  /* ---------- SECTION CARDS (home) ---------- */
+  .section-cards{ display:flex; flex-direction:column; gap:16px; }
+  .section-card{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card);
+    border:2px solid var(--sc3);
+    border-radius:20px;
+    padding:18px 20px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .15s ease;
+    text-align:right;
+  }
+  .section-card:hover{ transform:translateY(-3px); }
+  .section-card .icon-wrap{
+    width:54px; height:54px; border-radius:16px;
+    background:var(--sc1);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .section-card .icon-wrap svg{ width:28px; height:28px; fill:#fff; }
+  .section-card .text h3{ margin:0 0 3px; font-family:'Baloo Bhaijaan 2'; font-size:19px; color:var(--sc1); }
+  .section-card .text p{ margin:0; font-size:13px; opacity:.65; line-height:1.5; }
+  .section-card .arrow{ margin-right:auto; font-size:20px; color:var(--sc1); opacity:.5; }
+  .home-footer{ text-align:center; margin-top:34px; font-size:13px; opacity:.5; }
+  /* ---------- SUBSECTION HOME (for Latin/Greek) ---------- */
+  .sub-cards{ display:flex; flex-direction:column; gap:14px; margin-top:6px; }
+  /* ---------- LETTERS GRID PAGE ---------- */
+  .letters-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+  @media (max-width:480px){ .letters-grid{grid-template-columns:repeat(5,1fr);} }
+  .letter-btn{
+    aspect-ratio:1; border:none; border-radius:16px;
+    font-family:'Fredoka', sans-serif; font-size:22px; font-weight:700;
+    color:#fff; cursor:pointer; box-shadow:var(--shadow);
+    transition:transform .15s ease;
+  }
+  .letter-btn:hover{ transform:translateY(-3px) rotate(-2deg); }
+  .letter-btn:active{ transform:translateY(1px); box-shadow:2px 2px 0 rgba(28,23,48,.12); }
+  .letter-btn.disabled{ background:#e7e2d8 !important; color:#bdb6a6; cursor:default; box-shadow:none; }
+  .letter-btn.disabled:hover{ transform:none; }
+  /* ---------- TOP NAV (back buttons) ---------- */
+  .top-nav{ display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .nav-pill{
+    display:flex; align-items:center; gap:6px;
+    background:var(--ink); color:#fff; border:none;
+    padding:9px 15px; border-radius:999px;
+    font-family:'Tajawal'; font-weight:700; font-size:13px;
+    cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.15);
+  }
+  .nav-pill.ghost{ background:#f1ece0; color:var(--ink); box-shadow:none; }
+  .breadcrumb{ font-size:12px; opacity:.5; margin-bottom:4px; }
+  .section-hero{
+    display:flex; align-items:center; gap:14px;
+    border-radius:22px; padding:18px 22px; color:#fff;
+    box-shadow:var(--shadow); margin-bottom:24px;
+  }
+  .section-hero .hero-icon{
+    width:54px;height:54px; border-radius:16px;
+    background:rgba(255,255,255,.25);
+    display:flex;align-items:center;justify-content:center; flex-shrink:0;
+  }
+  .section-hero .hero-icon svg{ width:26px;height:26px; fill:#fff; }
+  .section-hero h2{ margin:0 0 2px; font-family:'Baloo Bhaijaan 2'; font-size:20px; }
+  .section-hero p{ margin:0; font-size:13px; opacity:.9; }
+  /* ---------- LETTER PAGE HERO ---------- */
+  .letter-hero{
+    display:flex; align-items:center; gap:16px;
+    background:var(--c1); border-radius:22px; padding:18px 22px; color:#fff;
+    box-shadow:var(--shadow); margin-bottom:26px;
+  }
+  .letter-hero .big-letter{
+    font-family:'Fredoka'; font-size:50px; font-weight:700; line-height:1;
+    background:rgba(255,255,255,.25); width:70px;height:70px; border-radius:18px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .letter-hero .hero-text h2{ margin:0 0 2px; font-family:'Baloo Bhaijaan 2'; font-size:20px; }
+  .letter-hero .hero-text p{ margin:0; font-size:13px; opacity:.9; }
+  /* ---------- word card ---------- */
+  .word-card{
+    background:var(--card); border-radius:20px; box-shadow:var(--shadow);
+    margin-bottom:20px; overflow:hidden; border:2px solid var(--c3);
+  }
+  .row{ padding:14px 20px; border-bottom:1px dashed #e8e3d6; display:flex; align-items:center; gap:12px; }
+  .row:last-child{ border-bottom:none; }
+  .row-label{
+    font-size:11px; font-weight:700; color:var(--c1); background:var(--c3);
+    padding:3px 10px; border-radius:999px; white-space:nowrap; flex-shrink:0;
+  }
+  .row-word{ background:var(--c3); }
+  .word-en{ font-family:'Fredoka'; font-size:22px; font-weight:700; color:var(--ink); flex:1; }
+  .speak-btn{
+    border:none; background:var(--c1, #3a86ff); color:#fff; width:42px;height:42px;
+    border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; box-shadow:0 3px 0 rgba(0,0,0,.18); transition:transform .12s;
+  }
+  .speak-btn:hover{ transform:scale(1.1); }
+  .speak-btn:active{ transform:scale(.92); }
+  .speak-btn svg{ width:20px; height:20px; fill:#fff; }
+  .word-ar{ font-size:16px; font-weight:700; flex:1; }
+  .word-ar small{ font-weight:400; opacity:.7; display:block; margin-top:3px; font-size:13px;}
+  .word-example{ font-size:13.5px; font-style:italic; color:#555; flex:1; line-height:1.5; }
+  .practice-input{
+    flex:1; border:2px solid #e8e3d6; border-radius:10px; padding:9px 12px;
+    font-family:'Fredoka'; font-size:15px; outline:none; transition:border-color .15s;
+  }
+  .practice-input:focus{ border-color:var(--c1); }
+  .practice-input.correct{ border-color:#2ec27e; background:#eafff2; }
+  .check-icon{ font-size:18px; width:20px; text-align:center; }
+  .nav-arrows{ display:flex; justify-content:space-between; margin-top:26px; gap:10px; }
+  .nav-btn{
+    flex:1; border:none; background:#f1ece0; color:var(--ink); padding:12px;
+    border-radius:14px; font-family:'Tajawal'; font-weight:700; cursor:pointer; font-size:13px;
+  }
+  .nav-btn:hover{ background:#e7e1d2; }
+  /* ---------- LOCK SCREEN ---------- */
+  #lockScreen{
+    position:fixed; inset:0;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255,77,109,.12), transparent 40%),
+      radial-gradient(circle at 92% 18%, rgba(58,134,255,.12), transparent 40%),
+      radial-gradient(circle at 50% 95%, rgba(255,190,11,.14), transparent 45%),
+      var(--paper);
+    z-index:999; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .lock-card{ background:var(--card); border-radius:24px; box-shadow:var(--shadow); padding:36px 28px; max-width:360px; width:100%; text-align:center; }
+  .lock-icon{ width:64px;height:64px; margin:0 auto 14px; border-radius:18px; background:linear-gradient(135deg,#ff4d6d,#3a86ff); display:flex;align-items:center;justify-content:center; }
+  .lock-icon svg{ width:30px;height:30px; fill:#fff; }
+  .lock-card h2{ font-family:'Baloo Bhaijaan 2'; font-size:22px; margin:0 0 6px; }
+  .lock-card p{ font-size:13px; opacity:.6; margin:0 0 22px; line-height:1.6; }
+  .lock-input{
+    width:100%; border:2px solid #e8e3d6; border-radius:12px; padding:13px 16px;
+    font-family:'Fredoka'; font-size:17px; text-align:center; letter-spacing:2px;
+    outline:none; margin-bottom:12px; transition:border-color .15s;
+  }
+  .lock-input:focus{ border-color:#3a86ff; }
+  .lock-btn{
+    width:100%; border:none; background:var(--ink); color:#fff; padding:13px;
+    border-radius:12px; font-family:'Tajawal'; font-weight:700; font-size:15px;
+    cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.15);
+  }
+  .lock-error{ color:#ef476f; font-size:13px; font-weight:700; margin-top:10px; min-height:18px; }
+  body.locked{ overflow:hidden; }
+  body.locked .page{ display:none !important; }
+  /* ---------- ABBREVIATION CARD ---------- */
+  .abbr-card{
+    display:flex; align-items:center; gap:14px;
+    background:var(--card); border:2px solid #fff3ec;
+    border-radius:18px; padding:14px 18px; margin-bottom:14px;
+    box-shadow:var(--shadow);
+  }
+  .abbr-badge{
+    font-family:'Fredoka'; font-size:20px; font-weight:700;
+    background:#fb5607; color:#fff; padding:8px 14px;
+    border-radius:12px; min-width:64px; text-align:center; flex-shrink:0;
+  }
+  .abbr-text{ flex:1; }
+  .abbr-full{ font-size:14px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+  .abbr-ar{ font-size:13px; opacity:.65; }
+  /* ---------- CONFUSABLE PAIR CARD ---------- */
+  .confuse-pair{
+    background:var(--card); border:2px solid #fff0f4;
+    border-radius:20px; padding:18px; margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+  .confuse-vs{
+    display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:14px;
+  }
+  .confuse-word{
+    flex:1; text-align:center; padding:12px 8px; border-radius:14px;
+  }
+  .confuse-word.w1{ background:#fff0f4; }
+  .confuse-word.w2{ background:#eef7ff; }
+  .confuse-word .en{ font-family:'Fredoka'; font-size:19px; font-weight:700; color:var(--ink); }
+  .confuse-word .ar{ font-size:12.5px; opacity:.7; margin-top:3px; }
+  .confuse-vs-icon{
+    font-family:'Baloo Bhaijaan 2'; font-size:13px; font-weight:800;
+    color:#ef476f; background:#fff0f4; width:34px;height:34px;
+    border-radius:50%; display:flex;align-items:center;justify-content:center; flex-shrink:0;
+  }
+  .confuse-tip{
+    font-size:13px; line-height:1.7; background:#fdfbf5;
+    border-right:3px solid #ef476f; padding:10px 14px; border-radius:0 10px 10px 0;
+  }
+  .confuse-tip b{ color:#ef476f; }
+  /* ---------- FAVORITE HEART ---------- */
+  .row-word{ position:relative; }
+  .fav-btn{
+    border:none; background:transparent; cursor:pointer;
+    width:32px; height:32px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s ease;
+  }
+  .fav-btn:hover{ transform:scale(1.15); }
+  .fav-btn svg{ width:22px; height:22px; fill:none; stroke:#c9c2b0; stroke-width:2; transition:fill .15s, stroke .15s; }
+  .fav-btn.active svg{ fill:#ef476f; stroke:#ef476f; }
+  /* ---------- MNEMONIC ROW ---------- */
+  .row-mnemonic{ background:#fffbe8; align-items:flex-start; }
+  .row-mnemonic .row-label{ color:#b8860b; background:#fff3cc; margin-top:1px; }
+  .mnemonic-text{ font-size:13.5px; line-height:1.7; flex:1; }
+  .mnemonic-text .emoji{ font-size:15px; margin-left:4px; }
+  /* ---------- PROGRESS BAR ---------- */
+  .progress-wrap{ margin-bottom:22px; }
+  .progress-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:700; opacity:.6; margin-bottom:6px; }
+  .progress-track{ height:10px; background:#efe9da; border-radius:999px; overflow:hidden; }
+  .progress-fill{ height:100%; border-radius:999px; transition:width .3s ease; background:linear-gradient(90deg,#ff4d6d,#3a86ff); }
+  /* ---------- FAVORITES PAGE ---------- */
+  .sec-favorites{ --sc1:#ef476f; --sc2:#f4a3b8; --sc3:#fff0f4; }
+  .empty-state{ text-align:center; padding:50px 20px; opacity:.55; }
+  .empty-state svg{ width:54px; height:54px; margin-bottom:12px; opacity:.4; }
+  .empty-state p{ font-size:14px; line-height:1.7; }
+  .fav-source-tag{
+    font-size:10.5px; font-weight:700; color:#fff; background:var(--c1);
+    padding:2px 9px; border-radius:999px; display:inline-block; margin-bottom:8px;
+  }
+  /* ---------- QUIZ ---------- */
+  .quiz-cta{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:linear-gradient(90deg,#ff4d6d,#3a86ff); color:#fff;
+    border:none; border-radius:16px; padding:15px; width:100%;
+    font-family:'Tajawal'; font-weight:700; font-size:15px; cursor:pointer;
+    box-shadow:var(--shadow); margin-top:10px;
+  }
+  .quiz-cta:hover{ opacity:.92; }
+  .quiz-overlay{
+    position:fixed; inset:0; background:var(--paper); z-index:500;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .quiz-box{
+    background:var(--card); border-radius:24px; box-shadow:var(--shadow);
+    padding:28px 24px; max-width:420px; width:100%;
+  }
+  .quiz-progress{ font-size:12px; font-weight:700; opacity:.55; margin-bottom:10px; text-align:center; }
+  .quiz-question{
+    font-family:'Fredoka'; font-size:22px; font-weight:700; color:var(--ink);
+    text-align:center; margin-bottom:6px;
+  }
+  .quiz-subtitle{ font-size:13px; opacity:.6; text-align:center; margin-bottom:20px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:10px; }
+  .quiz-option{
+    border:2px solid #e8e3d6; background:var(--card); border-radius:14px;
+    padding:13px 16px; font-family:'Tajawal'; font-size:14px; text-align:right;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .quiz-option:hover{ border-color:#3a86ff; }
+  .quiz-option.correct{ background:#eafff2; border-color:#2ec27e; font-weight:700; }
+  .quiz-option.wrong{ background:#fff0f4; border-color:#ef476f; }
+  .quiz-option.disabled{ pointer-events:none; opacity:.6; }
+  .quiz-feedback{ text-align:center; font-weight:700; margin-top:16px; font-size:14px; min-height:20px; }
+  .quiz-feedback.correct-text{ color:#2ec27e; }
+  .quiz-feedback.wrong-text{ color:#ef476f; }
+  .quiz-next-btn{
+    width:100%; margin-top:16px; border:none; background:var(--ink); color:#fff;
+    padding:12px; border-radius:12px; font-family:'Tajawal'; font-weight:700;
+    cursor:pointer; display:none;
+  }
+  .quiz-result{ text-align:center; }
+  .quiz-result-emoji{ font-size:50px; margin-bottom:10px; }
+  .quiz-result-score{ font-family:'Fredoka'; font-size:28px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .quiz-result-msg{ font-size:14px; opacity:.65; margin-bottom:22px; }
+  .quiz-close-btn{
+    width:100%; border:none; background:#f1ece0; color:var(--ink); padding:12px;
+    border-radius:12px; font-family:'Tajawal'; font-weight:700; cursor:pointer; margin-top:8px;
+  }
+  .quiz-close-x{
+    position:absolute; top:14px; left:14px; background:none; border:none;
+    font-size:20px; opacity:.4; cursor:pointer;
+  }
+  .quiz-box{ position:relative; }
+  /* full quiz card on home page */
+  .full-quiz-card{
+    display:flex; align-items:center; gap:16px;
+    background:linear-gradient(135deg,#ff4d6d,#3a86ff);
+    border-radius:20px; padding:18px 20px; color:#fff;
+    cursor:pointer; box-shadow:var(--shadow); margin-top:16px;
+  }
+  .full-quiz-card .icon-wrap{ width:54px;height:54px; border-radius:16px; background:rgba(255,255,255,.25); display:flex;align-items:center;justify-content:center; flex-shrink:0; font-size:26px; }
+  .full-quiz-card h3{ margin:0 0 3px; font-family:'Baloo Bhaijaan 2'; font-size:18px; }
+  .full-quiz-card p{ margin:0; font-size:12.5px; opacity:.9; }
+  /* ---------- SPACED REVIEW ---------- */
+  .sec-review{ --sc1:#06aed5; --sc2:#8fd9ec; --sc3:#e9faff; }
+  .review-stats-row{ display:flex; gap:10px; margin-bottom:20px; }
+  .review-stat{
+    flex:1; background:var(--card); border-radius:16px; padding:14px;
+    text-align:center; box-shadow:var(--shadow);
+  }
+  .review-stat .num{ font-family:'Fredoka'; font-size:24px; font-weight:700; }
+  .review-stat .label{ font-size:11px; opacity:.6; margin-top:2px; }
+  .review-stat.due .num{ color:#ef476f; }
+  .review-stat.learned .num{ color:#2ec27e; }
+  .review-stat.total .num{ color:#3a86ff; }
+  .review-due-tag{
+    font-size:10px; font-weight:700; color:#fff; background:#ef476f;
+    padding:2px 8px; border-radius:999px; display:inline-block; margin-bottom:8px;
+  }
+  .review-mastery-bar{ height:6px; background:#efe9da; border-radius:999px; overflow:hidden; margin-top:4px; }
+  .review-mastery-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,#ff4d6d,#3a86ff); }
+  .review-level-label{ font-size:11px; opacity:.55; margin-top:4px; }
+</style>
+</head>
+<body class="locked">
+<!-- ============ LOCK SCREEN ============ -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0v3H9V7z"/></svg>
+    </div>
+    <h2>قاموسي الطبي</h2>
+    <p>أدخل كود التفعيل الخاص بك للدخول إلى المحتوى</p>
+    <input type="text" id="accessCodeInput" class="lock-input" placeholder="اكتب الكود هنا" autocomplete="off">
+    <button class="lock-btn" onclick="checkAccessCode()">دخول ✨</button>
+    <div class="lock-error" id="lockError"></div>
+  </div>
+</div>
+<!-- ============ HOME PAGE ============ -->
+<div class="page active" id="page-home">
+  <div class="home-header">
+    <span class="badge">📖 طلاب الكليات الصحية</span>
+    <h1 class="home-title">قاموسي <span>الطبي</span></h1>
+    <p class="home-sub">اختار القسم اللي عايز تذاكر منه</p>
+  </div>
+  <div class="deco-row">
+    <svg viewBox="0 0 24 24" fill="#ff4d6d"><path d="M6 2a1 1 0 0 0-1 1v6a4 4 0 0 0 8 0V5h1v4a5 5 0 0 1-10 0V3a1 1 0 1 0-2 0v6a7 7 0 0 0 6 6.93V18a3 3 0 1 0 2 0v-2.07A7 7 0 0 0 16 9V3a1 1 0 1 0-2 0v6a4 4 0 0 1-1 0V3a1 1 0 0 0-1-1H6z"/></svg>
+    <svg viewBox="0 0 24 24" fill="#3a86ff"><path d="M12 21s-7.5-4.8-10-9.5C.5 7.8 2.8 4 6.5 4 9 4 11 5.6 12 7.2 13 5.6 15 4 17.5 4 21.2 4 23.5 7.8 22 11.5 19.5 16.2 12 21 12 21z"/></svg>
+    <svg viewBox="0 0 24 24" fill="#ffbe0b"><rect x="2" y="9" width="20" height="6" rx="3" transform="rotate(-30 12 12)"/><path d="M7 6l10 12" stroke="#fff" stroke-width="1.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M6 2c0 5 12 5 12 10s-12 5-12 10M18 2c0 5-12 5-12 10s12 5 12 10" stroke="#2ec27e" stroke-width="2" stroke-linecap="round"/></svg>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن أي كلمة، مثل: Anemia" autocomplete="off" oninput="performSearch(this.value)">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+  <div class="section-cards" id="sectionCardsWrap">
+    <div class="section-card sec-english" onclick="showPage('english-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="text">
+        <h3>English Terms</h3>
+        <p>مصطلحات إنجليزية أكاديمية تستخدم في الكتب الطبية</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+    <div class="section-card sec-roots" onclick="showPage('latin-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M6 2c0 5 12 5 12 10s-12 5-12 10M18 2c0 5-12 5-12 10s12 5 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+      <div class="text">
+        <h3>Latin &amp; Greek</h3>
+        <p>جذور ولاصقات + عبارات لاتينية كاملة شائعة في الطب</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+    <div class="section-card sec-abbr" onclick="showPage('abbr-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h10M4 19h13" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="text">
+        <h3>⚡ اختصارات طبية</h3>
+        <p>BP, HR, Hx, Dx... اختصارات شائعة جدًا في الكتب والتقارير</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+    <div class="section-card sec-confuse" onclick="showPage('confuse-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M9 9l6 6M15 9l-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="1.6"/></svg></div>
+      <div class="text">
+        <h3>⚠️ كلمات بتتلخبط</h3>
+        <p>كلمات متشابهة شكلًا لكن معناها مختلف تمامًا — خليك فاهمها صح</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+    <div class="section-card sec-favorites" onclick="showPage('favorites-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.8-10-9.5C.5 7.8 2.8 4 6.5 4 9 4 11 5.6 12 7.2 13 5.6 15 4 17.5 4 21.2 4 23.5 7.8 22 11.5 19.5 16.2 12 21 12 21z"/></svg></div>
+      <div class="text">
+        <h3>❤️ مفضلاتي</h3>
+        <p>كل الكلمات اللي علّمت عليها بالقلب، في صفحة واحدة للمراجعة</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+  </div>
+  <div class="full-quiz-card" style="background:linear-gradient(135deg,#06aed5,#3a86ff)" onclick="showPage('review-home')">
+    <div class="icon-wrap">📅</div>
+    <div>
+      <h3>مراجعة اليوم</h3>
+      <p>الكلمات اللي محتاجة مراجعة دلوقتي حسب تقدمك، عشان تثبت في الذاكرة</p>
+    </div>
+  </div>
+  <div class="full-quiz-card" onclick="startQuiz('full')">
+    <div class="icon-wrap">🎯</div>
+    <div>
+      <h3>اختبار شامل</h3>
+      <p>أسئلة عشوائية من كل الأقسام (English + Roots + Phrases) لتقييم نفسك بشكل كامل</p>
+    </div>
+  </div>
+  <p class="home-footer">صُمم بحب لكل طلاب الكليات الصحية 💙</p>
+</div>
+<!-- ============ ENGLISH SECTION HOME ============ -->
+<div class="page" id="page-english-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-english" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div>
+      <h2>English Terms</h2>
+      <p>دوس على الحرف للوصول لكلماته</p>
+    </div>
+  </div>
+  <div class="letters-grid" id="lettersGrid-english"></div>
+</div>
+<!-- ============ LATIN HOME (chooses sub-section) ============ -->
+<div class="page" id="page-latin-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-roots" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M6 2c0 5 12 5 12 10s-12 5-12 10M18 2c0 5-12 5-12 10s12 5 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+    <div>
+      <h2>Latin &amp; Greek</h2>
+      <p>اختار نوع المحتوى</p>
+    </div>
+  </div>
+  <div class="sub-cards">
+    <div class="section-card sec-roots" onclick="showPage('roots-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2 6 7v6c0 4 3 7 6 9 3-2 6-5 6-9V7l-6-5z"/></svg></div>
+      <div class="text">
+        <h3>🧩 جذور ولاصقات</h3>
+        <p>Cardio-, -itis, Osteo- ... أساس تكوين الكلمات الطبية</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+    <div class="section-card sec-phrases" onclick="showPage('phrases-home')">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H6l-2 4V4z"/></svg></div>
+      <div class="text">
+        <h3>📝 عبارات لاتينية كاملة</h3>
+        <p>In vivo, Post mortem ... عبارات تُستخدم كما هي في الطب</p>
+      </div>
+      <div class="arrow">‹</div>
+    </div>
+  </div>
+</div>
+<!-- ============ ROOTS SECTION HOME ============ -->
+<div class="page" id="page-roots-home">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('latin-home')">⟵ Latin &amp; Greek</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-roots" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M12 2 6 7v6c0 4 3 7 6 9 3-2 6-5 6-9V7l-6-5z"/></svg></div>
+    <div>
+      <h2>جذور ولاصقات</h2>
+      <p>دوس على الحرف للوصول لجذوره</p>
+    </div>
+  </div>
+  <div class="letters-grid" id="lettersGrid-roots"></div>
+</div>
+<!-- ============ PHRASES SECTION HOME ============ -->
+<div class="page" id="page-phrases-home">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('latin-home')">⟵ Latin &amp; Greek</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-phrases" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H6l-2 4V4z"/></svg></div>
+    <div>
+      <h2>عبارات لاتينية كاملة</h2>
+      <p>دوس على الحرف للوصول لعباراته</p>
+    </div>
+  </div>
+  <div class="letters-grid" id="lettersGrid-phrases"></div>
+</div>
+<!-- ============ ENGLISH LETTER PAGES ============ -->
+<!-- LETTER A -->
+<div class="page A" id="page-english-A">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">A</div><div class="hero-text"><h2>English – حرف A</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-A">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-A"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-A')">🎯 اختبر نفسك في حرف A</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-home')">⟵ كل الحروف</button>
+    <button class="nav-btn" onclick="showPage('english-B')">حرف B ⟶</button>
+  </div>
+</div>
+<!-- LETTER B -->
+<div class="page B" id="page-english-B">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">B</div><div class="hero-text"><h2>English – حرف B</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-B">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-B"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-B')">🎯 اختبر نفسك في حرف B</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-A')">⟵ حرف A</button>
+    <button class="nav-btn" onclick="showPage('english-D')">حرف D ⟶</button>
+  </div>
+</div>
+<!-- LETTER D -->
+<div class="page D" id="page-english-D">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">D</div><div class="hero-text"><h2>English – حرف D</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-D">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-D"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-D')">🎯 اختبر نفسك في حرف D</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-B')">⟵ حرف B</button>
+    <button class="nav-btn" onclick="showPage('english-E')">حرف E ⟶</button>
+  </div>
+</div>
+<!-- LETTER E -->
+<div class="page E" id="page-english-E">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">E</div><div class="hero-text"><h2>English – حرف E</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-E">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-E"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-E')">🎯 اختبر نفسك في حرف E</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-D')">⟵ حرف D</button>
+    <button class="nav-btn" onclick="showPage('english-F')">حرف F ⟶</button>
+  </div>
+</div>
+<!-- LETTER F -->
+<div class="page F" id="page-english-F">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">F</div><div class="hero-text"><h2>English – حرف F</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-F">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-F"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-F')">🎯 اختبر نفسك في حرف F</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-E')">⟵ حرف E</button>
+    <button class="nav-btn" onclick="showPage('english-M')">حرف M ⟶</button>
+  </div>
+</div>
+<!-- LETTER M -->
+<div class="page M" id="page-english-M">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">M</div><div class="hero-text"><h2>English – حرف M</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-M">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-M"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-M')">🎯 اختبر نفسك في حرف M</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-F')">⟵ حرف F</button>
+    <button class="nav-btn" onclick="showPage('english-R')">حرف R ⟶</button>
+  </div>
+</div>
+<!-- LETTER R -->
+<div class="page R" id="page-english-R">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">R</div><div class="hero-text"><h2>English – حرف R</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-R">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-R"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-R')">🎯 اختبر نفسك في حرف R</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-M')">⟵ حرف M</button>
+    <button class="nav-btn" onclick="showPage('english-S')">حرف S ⟶</button>
+  </div>
+</div>
+<!-- LETTER S -->
+<div class="page S" id="page-english-S">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">S</div><div class="hero-text"><h2>English – حرف S</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-S">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-S"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-S')">🎯 اختبر نفسك في حرف S</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-R')">⟵ حرف R</button>
+    <button class="nav-btn" onclick="showPage('english-T')">حرف T ⟶</button>
+  </div>
+</div>
+<!-- LETTER T -->
+<div class="page T" id="page-english-T">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">T</div><div class="hero-text"><h2>English – حرف T</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-T">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-T"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-T')">🎯 اختبر نفسك في حرف T</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-S')">⟵ حرف S</button>
+    <button class="nav-btn" onclick="showPage('english-V')">حرف V ⟶</button>
+  </div>
+</div>
+<!-- LETTER V -->
+<div class="page V" id="page-english-V">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('english-home')">⟵ English Terms</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero"><div class="big-letter">V</div><div class="hero-text"><h2>English – حرف V</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-english-V">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-english-V"></div>
+  <button class="quiz-cta" onclick="startQuiz('english-V')">🎯 اختبر نفسك في حرف V</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('english-T')">⟵ حرف T</button>
+    <button class="nav-btn" onclick="showPage('english-home')">كل الحروف ⟶</button>
+  </div>
+</div>
+<!-- ============ ROOTS LETTER PAGE: C ============ -->
+<div class="page C" id="page-roots-C">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('roots-home')">⟵ جذور ولاصقات</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero" style="background:#2ec27e"><div class="big-letter">C</div><div class="hero-text"><h2>Roots – حرف C</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-roots-C">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-roots-C"></div>
+  <button class="quiz-cta" onclick="startQuiz('roots-C')">🎯 اختبر نفسك في حرف C</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('roots-home')">⟵ كل الحروف</button>
+    <button class="nav-btn" onclick="showPage('roots-home')">كل الحروف ⟶</button>
+  </div>
+</div>
+<!-- ============ PHRASES LETTER PAGE: I ============ -->
+<div class="page I" id="page-phrases-I">
+  <div class="top-nav">
+    <button class="nav-pill ghost" onclick="showPage('phrases-home')">⟵ عبارات لاتينية</button>
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="letter-hero" style="background:#8338ec"><div class="big-letter">I</div><div class="hero-text"><h2>Phrases – حرف I</h2><p>دوس على 🔊 لسماع النطق</p></div></div>
+  <div class="progress-wrap" id="progress-phrases-I">
+    <div class="progress-label"><span>تقدمك في هذا الحرف</span><span class="progress-count">0 / 0</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="words-phrases-I"></div>
+  <button class="quiz-cta" onclick="startQuiz('phrases-I')">🎯 اختبر نفسك في حرف I</button>
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="showPage('phrases-home')">⟵ كل الحروف</button>
+    <button class="nav-btn" onclick="showPage('phrases-home')">كل الحروف ⟶</button>
+  </div>
+</div>
+<!-- ============ ABBREVIATIONS SECTION ============ -->
+<div class="page" id="page-abbr-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-abbr" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h10M4 19h13" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></div>
+    <div>
+      <h2>اختصارات طبية شائعة</h2>
+      <p>اختصارات تقابلها كتير في الكتب والتقارير الطبية</p>
+    </div>
+  </div>
+  <div id="abbr-list"></div>
+</div>
+<!-- ============ CONFUSABLES SECTION ============ -->
+<div class="page" id="page-confuse-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-confuse" style="background:var(--sc1)">
+    <div class="hero-icon"><svg viewBox="0 0 24 24"><path d="M9 9l6 6M15 9l-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="1.6"/></svg></div>
+    <div>
+      <h2>كلمات بتتلخبط مع بعض</h2>
+      <p>كلمات شبه بعض في الشكل أو الصوت بس معناها مختلف خالص</p>
+    </div>
+  </div>
+  <div id="confuse-list"></div>
+</div>
+<!-- ============ FAVORITES PAGE ============ -->
+<div class="page" id="page-favorites-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-favorites" style="background:var(--sc1)">
+    <div class="hero-icon">❤️</div>
+    <div>
+      <h2>مفضلاتي</h2>
+      <p>كل الكلمات اللي حفظتها للمراجعة السريعة</p>
+    </div>
+  </div>
+  <div id="favorites-list"></div>
+</div>
+<!-- ============ REVIEW (SPACED REPETITION) PAGE ============ -->
+<div class="page" id="page-review-home">
+  <div class="top-nav">
+    <button class="nav-pill" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+  <div class="section-hero sec-review" style="background:var(--sc1)">
+    <div class="hero-icon">📅</div>
+    <div>
+      <h2>مراجعة اليوم</h2>
+      <p>راجع الكلمات دي دلوقتي عشان تثبت في ذاكرتك</p>
+    </div>
+  </div>
+  <div class="review-stats-row" id="reviewStatsRow"></div>
+  <div id="review-list"></div>
+</div>
+<!-- ============ QUIZ OVERLAY ============ -->
+<div class="quiz-overlay" id="quizOverlay" style="display:none">
+  <div class="quiz-box" id="quizBox"></div>
+</div>
+<script>
+// ====== ACCESS CODES ======
+const ACCESS_CODES = {
+  "MONA1234": "مثال - اسم الطالب الأول",
+  "AHMED5678": "مثال - اسم الطالب الثاني",
+  "SARA9012": "مثال - اسم الطالب الثالث"
+};
+const STORAGE_KEY = "medvocab_access_granted";
+function checkAccessCode(){
+  const input = document.getElementById('accessCodeInput');
+  const error = document.getElementById('lockError');
+  const code = input.value.trim().toUpperCase();
+  if(ACCESS_CODES.hasOwnProperty(code)){
+    try{ localStorage.setItem(STORAGE_KEY, code); }catch(e){}
+    unlockApp();
+  } else {
+    error.textContent = "الكود غير صحيح، تأكد من كتابته بشكل صحيح";
+    input.style.borderColor = "#ef476f";
+  }
+}
+function unlockApp(){
+  document.getElementById('lockScreen').style.display = 'none';
+  document.body.classList.remove('locked');
+  document.getElementById('page-home').classList.add('active');
+}
+(function checkSavedAccess(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved && ACCESS_CODES.hasOwnProperty(saved)){ unlockApp(); }
+  }catch(e){}
+})();
+document.getElementById('accessCodeInput').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') checkAccessCode();
+});
+// ====== ALPHABETS PER SECTION ======
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const ACTIVE = {
+  english: ["A","B","D","E","F","M","R","S","T","V"],
+  roots: ["C"],
+  phrases: ["I"]
+};
+const LETTER_COLORS = {
+  A:"#ff4d6d", B:"#3a86ff", C:"#2ec27e", D:"#ffbe0b", E:"#8338ec",
+  F:"#fb5607", G:"#06aed5", H:"#ff5d8f", I:"#8338ec", J:"#ff006e",
+  K:"#118ab2", L:"#f15bb5", M:"#fee440", N:"#00bbf9", O:"#9b5de5",
+  P:"#f77f00", Q:"#00f5d4", R:"#ef476f", S:"#06aed5", T:"#118ab2",
+  U:"#ffd166", V:"#7209b7", W:"#4361ee", X:"#e63946", Y:"#2a9d8f", Z:"#f4a261"
+};
+const WORDS = {
+  "english-A": [
+    {id:"en-adjacent", en:"Adjacent", ar:"مجاور / متلاصق", def:"وصف لشيء يقع بجانب شيء آخر أو ملاصق له مباشرة", ex:"The adjacent tissues were carefully removed during surgery.", mnem:"Ad (بجانب) + Jacent (يكون) → يكون بجانب 🏘️ فكر في 'Adjoin' (يلتصق)"},
+    {id:"en-anemia", en:"Anemia", ar:"أنيميا (فقر الدم)", def:"نقص في عدد أو كفاءة خلايا الدم الحمراء أو الهيموجلوبين بالجسم", ex:"The patient was diagnosed with iron-deficiency anemia.", mnem:"An (بدون/نقص) + emia (في الدم) = نقص حاجة في الدم 🩸 زي ما Anhydrous يعني 'بدون مية'"},
+    {id:"en-artery", en:"Artery", ar:"شريان", def:"وعاء دموي يحمل الدم المؤكسج من القلب إلى باقي أعضاء الجسم", ex:"The surgeon carefully clamped the artery before the incision.", mnem:"Artery تبدأ بـ A، و Away (بعيد) كمان بـ A — الشريان يحمل الدم بعيدًا من القلب 🫀"},
+    {id:"en-antibiotic", en:"Antibiotic", ar:"مضاد حيوي", def:"دواء يُستخدم لعلاج العدوى البكتيرية", ex:"The doctor prescribed an antibiotic for the bacterial infection.", mnem:"Anti = ضد، Biotic = حياة (بكتيريا) → ضد حياة البكتيريا 💊"},
+    {id:"en-anchor", en:"Anchor", ar:"يثبت / نقطة ارتكاز", def:"نقطة تثبيت أو ارتكاز", ex:"The root anchors the tooth to the bone.", mnem:"Anchor = يثبت (مثل مرساة السفينة) ⚓"},
+    {id:"en-accompany", en:"Accompany", ar:"يرافق / يصاحب", def:"الذهاب أو الحضور مع شخص آخر", ex:"Pain often accompanies the inflammation.", mnem:"Accompany = يمشي معك (AC + Company) 👥"},
+    {id:"en-approximately", en:"Approximately", ar:"تقريباً / بشكل تقريبي", def:"بقيمة قريبة لكن ليست دقيقة", ex:"The surgery takes approximately 2 hours.", mnem:"Approximately = تقريباً (Approx.) ≈"}
+  ],
+  "english-B": [
+    {id:"en-bradycardia", en:"Bradycardia", ar:"بطء ضربات القلب", def:"معدل ضربات قلب أقل من 60 نبضة في الدقيقة", ex:"The athlete showed bradycardia at rest, which is normal.", mnem:"Brady = بطيء، Cardia = قلب → قلب بطيء 💓"},
+    {id:"en-biopsy", en:"Biopsy", ar:"خزعة", def:"أخذ عينة صغيرة من نسيج الجسم لفحصها تحت الميكروسكوب", ex:"A biopsy was taken from the suspicious skin lesion.", mnem:"Bio = حياة/نسيج، Opsy = نظرة (Opsis) → نظرة على نسيج 🔬"},
+    {id:"en-benign", en:"Benign", ar:"حميد (غير سرطاني)", def:"وصف لورم لا ينتشر ولا يهدد الحياة، عكس الخبيث", ex:"Fortunately, the tumor was found to be benign.", mnem:"Be-NICE-n 😊 فكر فيها كلطيفة (Nice) — عكس Malignant الشرير"},
+    {id:"en-blunt", en:"Blunt", ar:"غير حاد / منبسط", def:"سطح غير حاد أو نهاية مستديرة", ex:"The scalpel has a blunt edge.", mnem:"Blunt = غير حاد (عكس sharp) 🔴"},
+    {id:"en-border", en:"Border", ar:"حد / حافة / حدود", def:"الخط الذي يفصل شيئين", ex:"The tumor borders the healthy tissue.", mnem:"Border = الحدود بين الأشياء 🔀"}
+  ],
+  "english-D": [
+    {id:"en-diffuse", en:"Diffuse", ar:"منتشر / موزع على مساحة واسعة", def:"مادة أو مرض يتوزع أو ينتشر على نطاق واسع بدلاً من أن يكون متمركزًا في مكان واحد", ex:"The tumor appeared diffuse and difficult to isolate surgically.", mnem:"Diffuse بتشبه 'Fuse' (توزيع) → موزع / منتشر في كل مكان 🌊"},
+    {id:"en-diminish", en:"Diminish", ar:"يقلل / ينقص / يضعف", def:"تقليل الكمية أو القوة", ex:"Pain diminishes with treatment.", mnem:"Diminish = ينقص (Dim = تحت = يقل) 📉"},
+    {id:"en-diverge", en:"Diverge", ar:"يتباعد / يتفرع", def:"الانفصال في اتجاهات مختلفة", ex:"The nerves diverge from the spinal cord.", mnem:"Diverge = يتباعد (Di = اتجاهين مختلفين) 🔀"}
+  ],
+  "english-E": [
+    {id:"en-enhance", en:"Enhance", ar:"تحسين / تقوية", def:"جعل شيء أفضل أو أقوى أو أكثر فعالية", ex:"The contrast agent enhances the visibility of blood vessels in imaging.", mnem:"Enhance = جعل أحسن (hance تشبه 'Better') 💪"},
+    {id:"en-exert", en:"Exert", ar:"ممارسة / بذل (قوة أو تأثير)", def:"استخدام قوة أو ضغط أو تأثير على شيء معين", ex:"Regular exercise exerts a positive effect on cardiovascular health.", mnem:"Exert = X-ert (خرج) → خرج القوة من جسمك 💥"},
+    {id:"en-elevated", en:"Elevated", ar:"مرتفع / مرفوع", def:"في موضع أعلى من المعتاد", ex:"The patient has elevated blood pressure.", mnem:"Elevated = مرتفع (كالمصعد يرفع) 📈"},
+    {id:"en-enclose", en:"Enclose", ar:"يحيط / يرفق", def:"محاطة من جميع الجوانب", ex:"The pericardium encloses the heart.", mnem:"Enclose = يحيط (En + Close = يقفل حول) 🔒"},
+    {id:"en-embed", en:"Embed", ar:"مدرج / مغروس / منغمر", def:"غرس أو إدراج في شيء آخر", ex:"The tooth is embedded in the gum.", mnem:"Embed = يغرس (مثل Embed tree) 🌳"}
+  ],
+  "english-F": [
+    {id:"en-facilitate", en:"Facilitate", ar:"تسهيل / تسريع", def:"جعل شيء أسهل أو أسرع، تذليل العقبات", ex:"The new procedure facilitates faster recovery times for patients.", mnem:"Facil (سهل بالفرنسية) → تسهيل الطريق 🛣️"},
+    {id:"en-fluid", en:"Fluid", ar:"سائل", def:"مادة يمكنها أن تسيل وتتحرك بحرية (عكس الصلب)، أو مرن / متغير", ex:"Cerebrospinal fluid surrounds the brain and spinal cord.", mnem:"Fluid زي 'Flow' (تدفق) → يسيل ويتحرك 💧"},
+    {id:"en-framework", en:"Framework", ar:"هيكل / إطار / هيكل عظمي", def:"الهيكل الأساسي الذي يدعم", ex:"The skeletal framework supports the body.", mnem:"Framework = إطار (Frame + Work) 🏗️"},
+    {id:"en-fused", en:"Fused", ar:"ملتحم / متصل", def:"اتحاد عنصرين أو أكثر معاً", ex:"The bones are fused together.", mnem:"Fused = التحم (Fuse = ينصهر) 🔥"}
+  ],
+  "english-M": [
+    {id:"en-mechanism", en:"Mechanism", ar:"آلية / طريقة عمل", def:"طريقة أو نظام يعمل به شيء ما، العملية الفيزيولوجية أو البيولوجية", ex:"The mechanism of drug action involves blocking specific receptors.", mnem:"Mechanism = Machine (آلة) + ism → آلية الآلة ⚙️"}
+  ],
+  "english-R": [
+    {id:"en-regulate", en:"Regulate", ar:"تنظيم / ضبط", def:"التحكم في شيء أو جعله يعمل بشكل منتظم ومنضبط", ex:"The body regulates blood glucose through insulin secretion.", mnem:"Regulate من كلمة 'Rule' (قاعدة) → فرض قاعدة للتنظيم 📏"},
+    {id:"en-release", en:"Release", ar:"تحرير / إفراز", def:"ترك شيء حراً أو إطلاقه، أو إفراز مادة كيميائية", ex:"Mast cells release histamine during allergic reactions.", mnem:"Release = Re (مرة أخرى) + Lease (قيد) → حرر من القيد 🔓"},
+    {id:"en-response", en:"Response", ar:"استجابة / رد فعل", def:"الرد أو التفاعل على مثير أو حافز معين", ex:"The immune response activates when pathogens are detected.", mnem:"Response = Re (رد) + Sponse → رد من جسمك 🛡️"},
+    {id:"en-roughly", en:"Roughly", ar:"تقريباً / بشكل تقريبي", def:"بشكل غير دقيق", ex:"Roughly 60% of patients recover.", mnem:"Roughly = تقريباً (Rough) 📊"}
+  ],
+  "english-S": [
+    {id:"en-stimulate", en:"Stimulate", ar:"تحفيز / إثارة", def:"إعطاء حافز أو تشجيع على فعل أو نشاط معين", ex:"Caffeine stimulates the central nervous system.", mnem:"Stimulate = Stim (تحريك) → حرك وحفز 🔥"},
+    {id:"en-synthesized", en:"Synthesized", ar:"مُركَّب / مصنوع بشكل اصطناعي", def:"تم تكوينه من خلال دمج مكونات أساسية، أو تم صنعه صناعيًا", ex:"The synthesized drug was tested extensively before approval.", mnem:"Synthesized = Synthesis (تركيب) → تم تركيبه مثل جملة من الكلمات 🧪"},
+    {id:"en-scarce", en:"Scarce", ar:"نادر / قليل", def:"موجود بكمية صغيرة جداً", ex:"Oxygen was scarce in the tissue.", mnem:"Scarce = نادر (منقرضة) ⚠️"},
+    {id:"en-sharp", en:"Sharp", ar:"حاد / حد حاد", def:"نهاية حادة أو ألم حاد", ex:"The patient felt a sharp pain.", mnem:"Sharp = حاد (عكس blunt) 🔪"},
+    {id:"en-simultaneously", en:"Simultaneously", ar:"بشكل متزامن", def:"حدوث شيئين في نفس الوقت", ex:"Both sides develop symptoms simultaneously.", mnem:"Simultaneously = معاً (Simul = نفس) ⏰"},
+    {id:"en-specifically", en:"Specifically", ar:"بشكل محدد / تحديداً", def:"بشكل دقيق جداً", ex:"Specifically, the pain is in abdomen.", mnem:"Specifically = تحديداً (Specific) 🎯"}
+  ],
+  "english-T": [
+    {id:"en-target", en:"Target", ar:"هدف / غرض", def:"الشيء أو المكان المقصود الوصول إليه أو التأثير عليه", ex:"The drug targets specific cancer cells without affecting healthy tissue.", mnem:"Target = Tar (الهدف) + Get (خذ) → خذ الهدف 🎯"},
+    {id:"en-terminal", en:"Terminal", ar:"نهائي / طرفي / نهاية", def:"في النهاية أو الطرف البعيد", ex:"The terminal branches of the nerve.", mnem:"Terminal = نهائي (Terminal station) 🛑"}
+  ],
+  "english-V": [
+    {id:"en-variable", en:"Variable", ar:"متغير / قابل للتغيير", def:"شيء يتغير أو يختلف، أو عامل قد يتوقف عليه نتيجة معينة", ex:"Blood pressure is a variable factor in the patient's condition.", mnem:"Variable = Vary (يتغير) + Able (قادر) → قادر يتغير 📊"},
+    {id:"en-virtually", en:"Virtually", ar:"عملياً / بشكل فعلي", def:"في الواقع العملي", ex:"Virtually all patients recover.", mnem:"Virtually = عملياً (Virtual = حقيقي) 💯"}
+  ],
+  "roots-C": [
+    {id:"root-cardio", en:"Cardio-", ar:"جذر يعني: القلب", def:"يُستخدم في بداية الكلمة للإشارة إلى القلب", ex:"Cardiology is the study of the heart.", mnem:"Cardio من الجيم (تمرين القلب) — أي كلمة فيها Cardio معناها بترتبط بالقلب 🏃"},
+    {id:"root-itis", en:"-itis", ar:"لاصقة تعني: التهاب", def:"تُضاف في آخر الكلمة للإشارة إلى وجود التهاب في عضو معين", ex:"Arthritis means inflammation of the joints.", mnem:"-itis بتخلص بـ 'is' زي 'is burning/inflamed' 🔥 التهاب = حرقان"},
+    {id:"root-cyto", en:"Cyto-", ar:"جذر يعني: الخلية", def:"يُستخدم للإشارة إلى الخلية في علم الأحياء والطب", ex:"Cytology is the study of cells.", mnem:"Cytoplasm اللي سبق سمعتها في الأحياء (السيتوبلازم) — جوه الخلية 🔬"}
+  ],
+  "phrases-I": [
+    {id:"phrase-invivo", en:"In vivo", ar:"داخل الجسم الحي", def:"يُستخدم لوصف تجربة أو عملية تحدث داخل كائن حي فعلي", ex:"The drug was tested in vivo before human trials.", mnem:"Vivo زي 'Vivid/Alive' — حياة حقيقية 🐭"},
+    {id:"phrase-invitro", en:"In vitro", ar:"خارج الجسم (في المعمل)", def:"يُستخدم لوصف تجربة تحدث خارج الجسم الحي، مثل أنبوب اختبار", ex:"Fertilization can occur in vitro in a laboratory dish.", mnem:"Vitro زي 'Glass' (زجاج) — التجربة في إناء زجاجي 🧪"},
+    {id:"phrase-idem", en:"Idem", ar:"نفس الشيء / المرجع السابق", def:"تُستخدم في المراجع العلمية للإشارة لنفس المصدر المذكور سابقًا", ex:"The citation used 'idem' to refer to the same source.", mnem:"Idem زي 'Identical' (متطابق) — نفس المرجع بالظبط 📑"},    {id:"phrase-insitu", en:"In situ", ar:"في موضعه الأصلي", def:"في المكان أو الموضع الأصلي", ex:"The tumor remained in situ without spreading.", mnem:"In = في، Situ = موضع → في الموضع الأصلي 📍"},
+    {id:"phrase-denovo", en:"De novo", ar:"من جديد / من البداية", def:"من جديد، بدون وجود سابق", ex:"This mutation arose de novo in this patient.", mnem:"De = من، Novo = جديد → من جديد تماماً 🆕"},
+    {id:"phrase-perse", en:"Per se", ar:"بذاته / بحد ذاته", def:"بمعزل عن أي شيء آخر", ex:"The symptom per se is not dangerous.", mnem:"Per = بـ، Se = نفسه → بنفسه 🎯"},
+    {id:"phrase-versus", en:"Versus", ar:"ضد / مقابل", def:"في مقابلة أو معارضة", ex:"Drug A versus Drug B in the trial.", mnem:"Versus = vs = ضد / مقابل ⚔️"},
+    {id:"phrase-etal", en:"Et al (et alii)", ar:"وآخرون", def:"يُستخدم في الاستشهادات للإشارة لباقي المؤلفين", ex:"Smith et al. conducted the study.", mnem:"Et = و، Al = آخرون → وآخرون 📚"},
+    {id:"phrase-ante", en:"Ante", ar:"قبل", def:"قبل، سابق لـ", ex:"Ante-natal care means before birth.", mnem:"Ante = قبل (مثل Anteroom = غرفة قبل الغرفة) 📅"},
+    {id:"phrase-post", en:"Post", ar:"بعد", def:"بعد، لاحق لـ", ex:"Post-operative care after surgery.", mnem:"Post = بعد (Post-it = ملصق بعد الكتابة) ⏳"},
+    {id:"phrase-via", en:"Via", ar:"عن طريق / من خلال", def:"بواسطة طريق أو وسيلة", ex:"The drug was administered via IV.", mnem:"Via = من خلال (مسار) 🛤️"},
+    {id:"phrase-circa", en:"Circa", ar:"حوالي / تقريباً", def:"بحوالي، تقريباً", ex:"The surgery took circa 2 hours.", mnem:"Circa = تقريباً (C. أو ca. = اختصار) ≈"},
+    {id:"phrase-adhoc", en:"Ad hoc", ar:"لهذا الغرض بالذات", def:"مخصص لحالة معينة دون تعميم", ex:"An ad hoc committee was formed.", mnem:"Ad = لـ، Hoc = هذا → لهذا الغرض بالذات 🎯"},
+    {id:"phrase-apriori", en:"A priori", ar:"مسبقاً / من المبدأ", def:"من خلال المنطق قبل التجربة", ex:"We cannot assume a priori that...", mnem:"A = من، Priori = أولي/قبل → من البداية 🧠"},
+    {id:"phrase-aposteriori", en:"A posteriori", ar:"لاحقاً / من التجربة", def:"من خلال التجربة والملاحظة", ex:"The diagnosis was made a posteriori.", mnem:"A = من، Posteriori = لاحق → من التجربة بعدها 🔬"},
+                          {short:"CT", full:"Computed Tomography", ar:"التصوير المقطعي"},
+  {short:"MRI", full:"Magnetic Resonance Imaging", ar:"التصوير بالرنين المغناطيسي"},
+  {short:"EEG", full:"Electroencephalogram", ar:"تخطيط الدماغ الكهربائي"},
+  {short:"X-Ray", full:"Radiography", ar:"الأشعات السينية"},
+  {short:"US", full:"Ultrasound", ar:"الموجات فوق الصوتية"},
+  {short:"PET", full:"Positron Emission Tomography", ar:"التصوير بالإصدار البوزيتروني"},
+  {short:"OPD", full:"Out Patient Department", ar:"العيادة الخارجية"},
+  {short:"IPD", full:"In Patient Department", ar:"المريض الداخلي"},
+  {short:"ICU", full:"Intensive Care Unit", ar:"وحدة العناية المركزة"},
+  {short:"NICU", full:"Neonatal ICU", ar:"وحدة العناية للخدج"},
+  {short:"OR", full:"Operation Room", ar:"غرفة العمليات"},
+  {short:"ER", full:"Emergency Room", ar:"غرفة الطوارئ"},
+  {short:"CCU", full:"Coronary Care Unit", ar:"وحدة العناية التاجية"},
+  {short:"BPM", full:"Beats Per Minute", ar:"نبضات في الدقيقة"},
+  {short:"HR", full:"Heart Rate", ar:"معدل ضربات القلب"},
+  {short:"RR", full:"Respiratory Rate", ar:"معدل التنفس"},
+  {short:"BP", full:"Blood Pressure", ar:"ضغط الدم"},
+  {short:"Temp", full:"Temperature", ar:"درجة الحرارة"},
+  {short:"SpO2", full:"Oxygen Saturation", ar:"تشبع الأكسجين"},
+  {short:"BMI", full:"Body Mass Index", ar:"مؤشر كتلة الجسم"},
+  {short:"RBC", full:"Red Blood Cells", ar:"كرات الدم الحمراء"},
+  {short:"WBC", full:"White Blood Cells", ar:"كرات الدم البيضاء"},
+  {short:"Hb", full:"Hemoglobin", ar:"الهيموجلوبين"},
+  {short:"Hct", full:"Hematocrit", ar:"الهيماتوكريت"},
+  {short:"Plt", full:"Platelets", ar:"الصفائح الدموية"},
+  {short:"CBC", full:"Complete Blood Count", ar:"تحليل الدم الكامل"},
+  {short:"FBS", full:"Fasting Blood Sugar", ar:"سكر الدم الصائم"},
+  {short:"RBS", full:"Random Blood Sugar", ar:"سكر الدم العشوائي"},
+  {short:"LFT", full:"Liver Function Tests", ar:"وظائف الكبد"},
+  {short:"RFT", full:"Renal Function Tests", ar:"وظائف الكلى"},
+  {short:"PT", full:"Prothrombin Time", ar:"اختبار التجلط"},
+  {short:"PTT", full:"Partial Thromboplastin Time", ar:"وقت الترومبوبلاستين الجزئي"},
+  {short:"UA", full:"Urinalysis", ar:"تحليل البول"},
+  {short:"CSF", full:"Cerebrospinal Fluid", ar:"السائل النخاعي"},
+  {short:"ESR", full:"Erythrocyte Sedimentation Rate", ar:"معدل تثفل الدم"},
+  {short:"CRP", full:"C-Reactive Protein", ar:"البروتين التفاعلي C"},
+  {short:"IV", full:"Intravenous", ar:"في الوريد"},
+  {short:"IM", full:"Intramuscular", ar:"في العضل"},
+  {short:"SC", full:"Subcutaneous", ar:"تحت الجلد"},
+  {short:"PO", full:"Per Oral", ar:"عن طريق الفم"},
+  {short:"NG", full:"Nasogastric", ar:"أنبوب الأنف والمعدة"},
+  {short:"PR", full:"Per Rectum", ar:"عن طريق المستقيم"},
+  {short:"IN", full:"Inhalation", ar:"استنشاق"},
+  {short:"OD", full:"Once Daily", ar:"مرة يومياً"},
+  {short:"BID", full:"Twice Daily", ar:"مرتين يومياً"},
+  {short:"TID", full:"Three Times Daily", ar:"ثلاث مرات يومياً"},
+  {short:"QID", full:"Four Times Daily", ar:"أربع مرات يومياً"},
+  {short:"STAT", full:"Immediately", ar:"فوراً"},
+  {short:"PRN", full:"As Needed", ar:"عند الحاجة"},
+  {short:"AC", full:"Before Meals", ar:"قبل الأكل"},
+  {short:"PC", full:"After Meals", ar:"بعد الأكل"},
+  {short:"MI", full:"Myocardial Infarction", ar:"احتشاء عضلة القلب"},
+  {short:"CHF", full:"Congestive Heart Failure", ar:"قصور القلب"},
+  {short:"COPD", full:"Chronic Obstructive Pulmonary Disease", ar:"الانسداد الرئوي المزمن"},
+  {short:"CVA", full:"Cerebrovascular Accident", ar:"السكتة الدماغية"},
+  {short:"UTI", full:"Urinary Tract Infection", ar:"عدوى المسالك البولية"},
+  {short:"URI", full:"Upper Respiratory Infection", ar:"عدوى الجهاز التنفسي العلوي"},
+  {short:"CAD", full:"Coronary Artery Disease", ar:"أمراض القلب الإقفارية"},
+  {short:"DM", full:"Diabetes Mellitus", ar:"السكري"},
+  {short:"HTN", full:"Hypertension", ar:"ارتفاع ضغط الدم"},
+  {short:"CVD", full:"Cardiovascular Disease", ar:"أمراض القلب والأوعية الدموية"},
+  {short:"Hx", full:"History", ar:"التاريخ المرضي"},
+  {short:"Dx", full:"Diagnosis", ar:"التشخيص"},
+  {short:"Tx", full:"Treatment", ar:"العلاج"},
+  {short:"Rx", full:"Prescription", ar:"الروشتة الطبية"},
+  {short:"Sx", full:"Symptoms", ar:"الأعراض"},
+  {short:"NPO", full:"Nil Per Os", ar:"ممنوع الأكل أو الشرب"}
+];
+function buildAbbreviations(){
+  const container = document.getElementById('abbr-list');
+  if(!container) return;
+  container.innerHTML = '';
+  ABBREVIATIONS.forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'abbr-card';
+    card.innerHTML = `
+      <div class="abbr-badge">${item.short}</div>
+      <div class="abbr-text">
+        <div class="abbr-full">${item.full}</div>
+        <div class="abbr-ar">${item.ar}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+// ====== CONFUSABLE WORD PAIRS DATA ======
+const CONFUSABLES = [
+  {
+    w1:{en:"Syndrome", ar:"متلازمة (مجموعة أعراض)"},
+    w2:{en:"Symptom", ar:"عرض واحد"},
+    tip:"Syndrome = مجموعة أعراض معاً. Symptom = عرض واحد بس 🩺"
+  },
+  {
+    w1:{en:"Acute", ar:"حاد / فجائي"},
+    w2:{en:"Chronic", ar:"مزمن / طويل الأمد"},
+    tip:"Acute = يبدأ فجأة وينتهي بسرعة. Chronic = يستمر طويلاً ⏱️"
+  },
+  {
+    w1:{en:"Dyspnea", ar:"صعوبة التنفس"},
+    w2:{en:"Dysphasia", ar:"صعوبة البلع / الكلام"},
+    tip:"Dyspnea = Dys + Pnea (تنفس). Dysphasia = Dys + Phasia (كلام) 🗣️"
+  },
+  {
+    w1:{en:"Edema", ar:"تورم (تجمع سوائل)"},
+    w2:{en:"Anemia", ar:"فقر الدم"},
+    tip:"Edema = تجمع سوائل خارج الخلايا. Anemia = نقص الهيموجلوبين في الدم 💧"
+  },
+  {
+    w1:{en:"Distal", ar:"بعيد / في الطرف البعيد"},
+    w2:{en:"Proximal", ar:"قريب / في القاعدة"},
+    tip:"Distal = بعيد عن المركز. Proximal = قريب من المركز 📍"
+  },
+  {
+    w1:{en:"Incision", ar:"شق جراحي (يقطع داخل)"},
+    w2:{en:"Excision", ar:"استئصال (إزالة كاملة)"},
+    tip:"Incision = في داخل الجسم (In). Excision = استئصال (Ex = خارج) ✂️"
+  },
+  {
+    w1:{en:"Aseptic", ar:"معقم (بدون جراثيم)"},
+    w2:{en:"Antiseptic", ar:"معقم للجلد / مواد مطهرة"},
+    tip:"Aseptic = معقم تماماً (Sterile). Antiseptic = مضاد للميكروبات 🧼"
+  },
+  {
+    w1:{en:"Nausea", ar:"غثيان"},
+    w2:{en:"Neuralgia", ar:"ألم في العصب"},
+    tip:"Nausea = شعور بالغثيان. Neuralgia = Neuro (عصب) + algia (ألم) 🤢"
+  },
+  {
+    w1:{en:"Otitis", ar:"التهاب الأذن"},
+    w2:{en:"Otoscopy", ar:"فحص الأذن بجهاز"},
+    tip:"Otitis = التهاب (Itis). Otoscopy = نظرة / فحص (Scopy) 👂"
+  },
+  {
+    w1:{en:"Hematoma", ar:"ورم دموي (تجمع دم)"},
+    w2:{en:"Hematuria", ar:"دم في البول"},
+    tip:"Hematoma = Hemato (دم) + oma (ورم). Hematuria = Hemato (دم) + uria (بول) 🩸"
+  },
+  {
+    w1:{en:"Pallor", ar:"شحوب الوجه"},
+    w2:{en:"Palpate", ar:"فحص باللمس"},
+    tip:"Pallor = شحوب (Pale). Palpate = اللمس للفحص (Palm = الكف) 🫴"
+  },
+  {
+    w1:{en:"Lesion", ar:"إصابة / ضرر في الأنسجة"},
+    w2:{en:"Lesional", ar:"متعلق بالإصابة (صفة)"},
+    tip:"Lesion = الإصابة نفسها. Lesional = صفة توصف تلك الإصابة 🩹"
+  },
+  {
+    w1:{en:"Hypertension", ar:"ارتفاع ضغط الدم"},
+    w2:{en:"Hypotension", ar:"انخفاض ضغط الدم"},
+    tip:"Hyper = فوق / مرتفع. Hypo = تحت / منخفض 📈📉"
+  },
+  {
+    w1:{en:"Gastritis", ar:"التهاب المعدة"},
+    w2:{en:"Gastroenteritis", ar:"التهاب المعدة والأمعاء"},
+    tip:"Gastritis = المعدة بس. Gastroenteritis = المعدة + الأمعاء 🍽️"
+  },
+  {
+    w1:{en:"Biopsy", ar:"أخذ عينة (من حي)"},
+    w2:{en:"Autopsy", ar:"فحص الجثة بعد الوفاة"},
+    tip:"Biopsy = Bio (حي). Autopsy = Auto (نفس الشخص/الجثة) 💀"
+  },
+  {
+    w1:{en:"Prescription", ar:"روشتة / وصفة طبية"},
+    w2:{en:"Proscription", ar:"منع / تحريم"},
+    tip:"Prescription = Pro (مع) = وصفة تدعم. Proscription = Pro (ضد) = منع 📋"
+  },
+  {
+    w1:{en:"Hypertrophy", ar:"تضخم (زيادة الحجم)"},
+    w2:{en:"Hypotrophy", ar:"ضمور (تصغير الحجم)"},
+    tip:"Hyper = زيادة. Hypo = نقص. Trophy = حجم / نمو 💪➡️🤏"
+  },
+  {
+    w1:{en:"Ileum", ar:"اللفائفي"},
+    w2:{en:"Ilium", ar:"الحرقفة"},
+    tip:"Ileum فيها E زي Intestine. Ilium فيها واحد زي العظم"
+  },
+  {
+    w1:{en:"Affect", ar:"يؤثر على"},
+    w2:{en:"Effect", ar:"التأثير / النتيجة"},
+    tip:"Affect = Action (فعل). Effect = End result (النتيجة)"
+  },
+  {
+    w1:{en:"Mucus", ar:"المادة المخاطية"},
+    w2:{en:"Mucous", ar:"صفة مخاطية"},
+    tip:"Mucus = الشيء نفسه. Mucous = صفة توصف حاجة"
+  },
+  {
+    w1:{en:"Inoculation", ar:"دخول الميكروب للجسم"},
+    w2:{en:"Incubation", ar:"فترة الحضانة (بين الدخول والأعراض)"},
+    tip:"Inoculation = دخول الميكروب. Incubation = الفترة الصامتة اللي بعده 💉⏳"
+  },
+  {
+    w1:{en:"Virulence", ar:"شدة / قوة المرض"},
+    w2:{en:"Pathogenicity", ar:"القدرة على إحداث المرض"},
+    tip:"Virulence = كام ضرر يعمل. Pathogenicity = هل يقدر يسبب مرض ولا لا 💢"
+  },
+  {
+    w1:{en:"Pyrogen", ar:"مادة تسبب حمّى"},
+    w2:{en:"Pyogenic", ar:"ميكروب يسبب قيح / صديد"},
+    tip:"Pyrogen = يسبب حرارة. Pyogenic = يسبب صديد 🔥"
+  },
+  {
+    w1:{en:"Toxin", ar:"سم نشط خطير"},
+    w2:{en:"Toxoid", ar:"سم معطَّل (آمن)"},
+    tip:"Toxin = السم الحقيقي. Toxoid = سم معطَّل وآمن (يستخدم في اللقاحات) 💉"
+  },
+  {
+    w1:{en:"Indication", ar:"حالة نعطي فيها الدواء ✅"},
+    w2:{en:"Contraindication", ar:"حالة ممنوع نعطي فيها الدواء ❌"},
+    tip:"Indication = يشير لاستخدام الدواء. Contraindication = ضد الاستخدام 💊"
+  },
+  {
+    w1:{en:"Endemic", ar:"مرض موجود بثبات في منطقة"},
+    w2:{en:"Epidemic", ar:"زيادة مفاجئة في الحالات بمنطقة"},
+    tip:"Endemic = في شعب/منطقة معينة. Epidemic = فوق المعدل الطبيعي 📍"
+  },
+  {
+    w1:{en:"Pandemic", ar:"انتشار عالمي للمرض"},
+    w2:{en:"Epidemic", ar:"انتشار محلي فقط"},
+    tip:"Pandemic = كل العالم. Epidemic = منطقة واحدة بس 🌍"
+  },
+  {
+    w1:{en:"Nausea", ar:"الشعور بالغثيان (بدون قيء)"},
+    w2:{en:"Vomiting", ar:"القيء الفعلي (خروج المحتويات)"},
+    tip:"Nausea = الشعور بس. Vomiting = الفعل الحقيقي 🤢"
+  },
+  {
+    w1:{en:"Active immunity", ar:"الجسم يصنع أجسام مضادة بنفسه"},
+    w2:{en:"Passive immunity", ar:"أخذ أجسام مضادة جاهزة"},
+    tip:"Active = جسمك يشتغل. Passive = تاخد جاهز من بره 🛡️"
+  }
+];
+function buildConfusables(){
+  const container = document.getElementById('confuse-list');
+  if(!container) return;
+  container.innerHTML = '';
+  CONFUSABLES.forEach(pair=>{
+    const card = document.createElement('div');
+    card.className = 'confuse-pair';
+    card.innerHTML = `
+      <div class="confuse-vs">
+        <div class="confuse-word w1">
+          <div class="en">${pair.w1.en}</div>
+          <div class="ar">${pair.w1.ar}</div>
+        </div>
+        <div class="confuse-vs-icon">VS</div>
+        <div class="confuse-word w2">
+          <div class="en">${pair.w2.en}</div>
+          <div class="ar">${pair.w2.ar}</div>
+        </div>
+      </div>
+      <div class="confuse-tip">💡 ${pair.tip}</div>`;
+    container.appendChild(card);
+  });
+}
+// ====== LIVE SEARCH ======
+function performSearch(query){
+  const q = query.trim().toLowerCase();
+  const resultsBox = document.getElementById('searchResults');
+  const cardsWrap = document.getElementById('sectionCardsWrap');
+  if(q.length === 0){
+    resultsBox.innerHTML = '';
+    cardsWrap.style.display = 'flex';
+    return;
+  }
+  cardsWrap.style.display = 'none';
+  let matches = [];
+  Object.keys(WORDS).forEach(key=>{
+    WORDS[key].forEach(w=>{
+      if(w.en.toLowerCase().includes(q)){
+        let type = key.startsWith('english') ? 'english' : key.startsWith('roots') ? 'roots' : 'phrases';
+        matches.push({...w, type});
+      }
+    });
+  });
+  ABBREVIATIONS.forEach(a=>{
+    if(a.short.toLowerCase().includes(q) || a.full.toLowerCase().includes(q)){
+      matches.push({en:a.short, ar:a.full + ' — ' + a.ar, def:'', ex:'', type:'abbr'});
+    }
+  });
+  CONFUSABLES.forEach(pair=>{
+    [pair.w1, pair.w2].forEach(word=>{
+      if(word.en.toLowerCase().includes(q)){
+        const alreadyFound = matches.some(m => m.en.toLowerCase() === word.en.toLowerCase());
+        if(!alreadyFound){
+          matches.push({en:word.en, ar:word.ar, def:'', ex:'', type:'confuse', pairTip:pair.tip,
+            otherWord: (pair.w1.en === word.en ? pair.w2 : pair.w1)});
+        }
+      }
+    });
+  });
+  if(matches.length === 0){
+    resultsBox.innerHTML = '<div class="search-empty">مفيش نتائج لـ "' + query + '" 🤔</div>';
+    return;
+  }
+  resultsBox.innerHTML = '';
+  matches.slice(0, 12).forEach(w=>{
+    const card = document.createElement('div');
+    card.className = 'search-result-card from-' + w.type;
+    const tagLabels = {english:'English', roots:'Roots', phrases:'Phrases', abbr:'اختصار', confuse:'كلمات بتتلخبط'};
+    let html = `
+      <span class="search-tag">${tagLabels[w.type]}</span>
+      <div class="search-result-head">
+        <div class="search-result-en">${w.en}</div>
+        <button class="speak-btn" aria-label="نطق الكلمة" onclick="speak('${w.en.replace(/'/g,"\\'")}')">
+          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16.5 12a3.5 3.5 0 0 0-1.5-2.87v5.74A3.5 3.5 0 0 0 16.5 12z"/></svg>
+        </button>
+      </div>
+      <div class="search-result-ar">${w.ar}</div>`;
+    if(w.def) html += `<div class="search-result-def">${w.def}</div>`;
+    if(w.ex) html += `<div class="search-result-ex">"${w.ex}"</div>`;
+    card.innerHTML = html;
+    resultsBox.appendChild(card);
+  });
+}
+// ====== QUIZ ======
+let quizState = { questions: [], currentIndex: 0, score: 0 };
+function shuffleArray(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function getAllWordsFlat(){
+  let all = [];
+  Object.keys(WORDS).forEach(key=>{
+    WORDS[key].forEach(w => all.push({...w, sourceKey:key}));
+  });
+  return all;
+}
+function buildQuizQuestions(scope){
+  let pool;
+  if(scope === 'full'){
+    pool = getAllWordsFlat();
+  } else {
+    pool = (WORDS[scope] || []).map(w => ({...w, sourceKey:scope}));
+  }
+  const allWords = getAllWordsFlat();
+  const numQuestions = scope === 'full' ? Math.min(8, pool.length) : Math.min(3, pool.length);
+  const selected = shuffleArray(pool).slice(0, numQuestions);
+  return selected.map(correctWord=>{
+    const wrongPool = allWords.filter(w => w.id !== correctWord.id);
+    const wrongs = shuffleArray(wrongPool).slice(0, 3).map(w => w.ar);
+    const options = shuffleArray([correctWord.ar, ...wrongs]);
+    return {
+      question: correctWord.en,
+      correctAnswer: correctWord.ar,
+      options: options,
+      wordId: correctWord.id
+    };
+  });
+}
+function startQuiz(scope){
+  const questions = buildQuizQuestions(scope);
+  if(questions.length === 0){
+    alert('لا توجد كلمات كافية لبدء اختبار هنا.');
+    return;
+  }
+  quizState = { questions, currentIndex: 0, score: 0 };
+  document.getElementById('quizOverlay').style.display = 'flex';
+  renderQuizQuestion();
+}
+function closeQuiz(){
+  document.getElementById('quizOverlay').style.display = 'none';
+}
+function renderQuizQuestion(){
+  const box = document.getElementById('quizBox');
+  const q = quizState.questions[quizState.currentIndex];
+  const qNum = quizState.currentIndex + 1;
+  const total = quizState.questions.length;
+  box.innerHTML = `
+    <button class="quiz-close-x" onclick="closeQuiz()">✕</button>
+    <div class="quiz-progress">سؤال ${qNum} من ${total}</div>
+    <div class="quiz-question">${q.question}</div>
+    <div class="quiz-subtitle">اختر المعنى الصحيح</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuizQuestion()">التالي ⟶</button>
+  `;
+  const optionsContainer = document.getElementById('quizOptions');
+  q.options.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt;
+    btn.onclick = () => selectQuizAnswer(opt, btn);
+    optionsContainer.appendChild(btn);
+  });
+}
+function selectQuizAnswer(selected, btnEl){
+  const q = quizState.questions[quizState.currentIndex];
+  const allOptions = document.querySelectorAll('#quizOptions .quiz-option');
+  const feedback = document.getElementById('quizFeedback');
+  const nextBtn = document.getElementById('quizNextBtn');
+  allOptions.forEach(b => b.classList.add('disabled'));
+  if(selected === q.correctAnswer){
+    btnEl.classList.add('correct');
+    feedback.textContent = '✅ إجابة صحيحة!';
+    feedback.className = 'quiz-feedback correct-text';
+    quizState.score++;
+    if(q.wordId) recordAnswer(q.wordId, true);
+  } else {
+    btnEl.classList.add('wrong');
+    feedback.textContent = '❌ الإجابة الصحيحة: ' + q.correctAnswer;
+    feedback.className = 'quiz-feedback wrong-text';
+    allOptions.forEach(b => { if(b.textContent === q.correctAnswer) b.classList.add('correct'); });
+    if(q.wordId) recordAnswer(q.wordId, false);
+  }
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = (quizState.currentIndex + 1 < quizState.questions.length) ? 'التالي ⟶' : 'عرض النتيجة 🎉';
+}
+function nextQuizQuestion(){
+  quizState.currentIndex++;
+  if(quizState.currentIndex < quizState.questions.length){
+    renderQuizQuestion();
+  } else {
+    renderQuizResult();
+  }
+}
+function renderQuizResult(){
+  const box = document.getElementById('quizBox');
+  const total = quizState.questions.length;
+  const score = quizState.score;
+  const pct = Math.round((score/total)*100);
+  let emoji, msg;
+  if(pct === 100){ emoji = '🏆'; msg = 'ممتاز! إجابات كاملة'; }
+  else if(pct >= 70){ emoji = '🎉'; msg = 'أداء قوي جدًا!'; }
+  else if(pct >= 40){ emoji = '💪'; msg = 'مش بايظ، راجع شوية'; }
+  else { emoji = '📚'; msg = 'ترجع تراجع الكلمات'; }
+  box.innerHTML = `
+    <button class="quiz-close-x" onclick="closeQuiz()">✕</button>
+    <div class="quiz-result">
+      <div class="quiz-result-emoji">${emoji}</div>
+      <div class="quiz-result-score">${score} / ${total}</div>
+      <div class="quiz-result-msg">${msg}</div>
+      <button class="quiz-close-btn" onclick="closeQuiz()">إغلاق</button>
+    </div>
+  `;
+}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if(el) el.classList.add('active');
+  if(id === 'favorites-home') buildFavoritesPage();
+  if(id === 'review-home') buildReviewPage();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function goHome(){ showPage('home'); }
+buildLettersGrid('english', 'lettersGrid-english');
+buildLettersGrid('roots', 'lettersGrid-roots');
+buildLettersGrid('phrases', 'lettersGrid-phrases');
+buildWordCards('english-A');
+buildWordCards('english-B');
+buildWordCards('english-D');
+buildWordCards('english-E');
+buildWordCards('english-F');
+buildWordCards('english-M');
+buildWordCards('english-R');
+buildWordCards('english-S');
+buildWordCards('english-T');
+buildWordCards('english-V');
+buildWordCards('roots-C');
+buildWordCards('phrases-I');
+buildAbbreviations();
+buildConfusables();
+</script>
+</body>
+</html>
